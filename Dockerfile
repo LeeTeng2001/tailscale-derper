@@ -2,7 +2,7 @@ FROM golang:latest AS builder
 WORKDIR /app
 
 # https://tailscale.com/kb/1118/custom-derp-servers/
-RUN go install tailscale.com/cmd/derper@main
+RUN go install tailscale.com/cmd/derper@latest
 
 FROM alpine:latest
 WORKDIR /app
@@ -16,7 +16,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 #    rm -rf /var/lib/apt/lists/* && \
 #    mkdir /app/certs
 
-RUN apk add --no-cache ca-certificates curl iptables tzdata openrc && \
+RUN apk add --no-cache ca-certificates curl iptables tzdata openrc libc6-compat && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir /app/certs
 
