@@ -1,5 +1,7 @@
 # Tailscale DERP Server
 
+Since the original repository is unmaintained, I forked it and optimise it
+
 Inspired by:
 
 - <https://github.com/fredliang44/derper-docker>
