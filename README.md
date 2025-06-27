@@ -2,11 +2,6 @@
 
 Since the original repository is unmaintained, I forked it and optimise it
 
-Inspired by:
-
-- <https://github.com/fredliang44/derper-docker>
-- <https://github.com/tijjjy/Tailscale-DERP-Docker>
-
 ## Environment
 
 | Env                   | Default                              | Description                                                                                                                       |
@@ -25,59 +20,20 @@ Inspired by:
 
 ## Example
 
-### Docker Standalone
-
-```bash
-docker run -it \
-  -e TS_SERVER=https://hs-control.example.com \
-  -e TS_AUTHKEY=tskey-abcdef1432341818 \
-  -e DERP_DOMAIN=derp-01.example.com \
-  -p 443:443/udp
-  -p 3478:3478/udp
-  ghcr.io/wind4/tailscale-derper:main
-```
-
-### Docker Compose + Traefik
+### Docker Compose + Externally managed certificate
 
 ```yaml
-version: "3"
-
 services:
-  traefik:
-    image: traefik:v2.10
-    command:
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik_data:/etc/traefik
-    restart: always
-
   derper:
-    image: ghcr.io/wind4/tailscale-derper:main
-    environment:
-      - TS_SERVER=https://hs-control.example.com
-      - TS_AUTHKEY=tskey-abcdef1432341818
-      - TS_EXTRA_ARGS=--hostname depr-01
-      - DERP_DOMAIN=derp-01.example.com
-      - DERP_ADDR=:80
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.derper.entrypoints=websecure
-      - traefik.http.routers.derper.rule=Host(`derp-01.example.com`)
-      - traefik.http.services.derper.loadbalancer.server.port=80
+    image: lee2001s/tailscale-derper:latest
+    restart: always
     ports:
       - 3478:3478/udp
+      - 127.0.0.1:23333:80
+    environment:
+      - DERP_DOMAIN=derp-jp.leeteng.com
+      - DERP_ADDR=:80
+      - TS_AUTHKEY=tskey-auxxxxx
     volumes:
-      - tailscale_data:/var/lib/tailscale
-    restart: always
-
-volumes:
-  traefik_data:
-  tailscale_data:
+      - ./tailscale_data:/var/lib/tailscale
 ```
